@@ -1,0 +1,44 @@
+{
+    "Departments": [
+        {
+            "Academic Programs": [
+                {
+                    "Faculty": [
+                        {
+                            "Name": "Thomas Abbott",
+                            "Title": "Lecturer, Sr.",
+                            "Email": "abbott3@rpi.edu",
+                            "Phone": ""
+                        },
+                        {
+                            "Name": "Michael Borbath",
+                            "Title": "Adjunct",
+                            "Email": "borbam@rpi.edu",
+                            "Phone": ""
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "Admissions (Graduate)": [
+                {
+                    "Faculty": [
+                        {
+                            "Name": "Charlieann Chacon",
+                            "Title": "Associate Director, MBA/MS Admissions",
+                            "Email": "chacoc2@rpi.edu",
+                            "Phone": "518-276-3062"
+                        },
+                        {
+                            "Name": "Jarron Decker",
+                            "Title": "Director, Graduate Admissions",
+                            "Email": "deckej3@rpi.edu",
+                            "Phone": "518-276-2340"
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}
