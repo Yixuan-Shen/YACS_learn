@@ -26,7 +26,6 @@ if __name__ == '__main__':
                 # print(person.contents[3].text.strip())
                 # print(person.contents[5].text.strip())
                 # print(person.contents[7].text.strip())
-                # break
                 personDict = {}
                 personDict['Name'] = person.contents[1].text.strip()
                 personDict['Title'] = person.contents[3].text.strip()
@@ -35,8 +34,6 @@ if __name__ == '__main__':
                 departmentFaculty[personDict['Name']] = personDict
             data[link.text.strip()] = departmentFaculty
     # print(formatToJSON(data))
-
-
 
 
     # Write to JSON file
