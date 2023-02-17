@@ -1,0 +1,20 @@
+{
+    "turnew2": {
+        "Name": "Wesley D. Turner",
+        "Title": "Lecturer, Sr.",
+        "Email": "turnew2@rpi.edu",
+        "Phone": "518-276-8184",
+        "Department": "Computer Science",
+        "Portfolio": "School of Science",
+        "Classes": []
+    },
+    "goldsd3": {
+        "Name": "David E. Goldschmidt",
+        "Title": "Lecturer, Sr.",
+        "Email": "goldsd3@rpi.edu",
+        "Phone": "518-276-2819",
+        "Department": "Computer Science",
+        "Portfolio": "School of Science",
+        "Classes": []
+    }
+}
