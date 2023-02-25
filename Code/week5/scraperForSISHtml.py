@@ -54,18 +54,26 @@ def getCourseInfo():
 
 
 # term_in=202301&
+# spring=01 
+# fall=09
+# arch=05
+# winter=12
+
 # subj_in=CSCI&
 # crse_in=2961&
 # crn_in=80260
-def createCourseTree():
-    courseTree = dict()
-    courseTree['202301'] = dict()
-    semesterCourseTree = courseTree['202301']
-    semesterCourseTree['CSCI'] = dict()
-    semesterCourseTree['CSCI']['2961'] = dict()
-    semesterCourseTree['CSCI']['2961']['80260'] = (rcsID)
-    return courseTree
 
+def loadCourseTree(CourseTree: dict):
+    for semaster in CourseTree:
+        for depart in semaster:
+            for course in depart:
+                for crn in course:
+                    pass
+
+
+
+#link = https://sis.rpi.edu/rss/bwckschd.p_disp_listcrse?
+# term_in={}&subj_in={}&crse_in={}&crn_in={}
 
 if __name__ == "__main__":
     # Info = {}
@@ -82,6 +90,14 @@ if __name__ == "__main__":
     # # Write to JSON file
     # with open('Prof.json', 'w') as outfile:
     #     json.dump(Info, outfile, indent=4, sort_keys=False)
+
+    Courses = dict()
+    
+    # Load course data from JSON file
+    with open("Courses.json", 'r') as infile:
+        Courses = json.load(infile)
+
+    print(Courses)
     rcsID = ["turnew2", "goldsd3"]
-    Tree = createCourseTree()
-    print(Tree)
+    # Tree = createCourseTree()
+    # print(Tree)
