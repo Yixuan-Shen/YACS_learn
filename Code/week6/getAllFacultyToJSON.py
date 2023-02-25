@@ -54,6 +54,7 @@ def getFacultyInfo(RCSID: str, OriginalName: list = [False]) -> dict:
     Info['Phone'] = Phone
     Info['Department'] = Department
     Info['Portfolio'] = Portfolio
+    Info['Profile Page'] = facultyName.replace(' ', '-')
     # Info['Classes'] = []
     return Info
 
