@@ -63,11 +63,11 @@ def getFacultyInfo(RCSID: str, OriginalName: list = [False]) -> dict:
 def verifyProfilePageLink(facultyName: str) -> str:
     link = "https://faculty.rpi.edu/" + \
         facultyName.replace(' ', '-')
-    pass
-    # if found
-    return link
-    # else
-    return ""
+    html = requests.get(link)
+    if html.status_code == 200:
+        return link
+    elif html.status_code == 404:
+        return ""
 
 
 def getCourseLink(semester: str, department: str, course: str, crn: str):
