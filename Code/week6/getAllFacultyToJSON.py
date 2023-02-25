@@ -17,7 +17,7 @@ def getFacultyInfo(RCSID: str, OriginalName: list = [False]) -> dict:
     soup = BeautifulSoup(html.text, 'html.parser')
     rawInfo = soup.find_all('div', class_='row p-3 odd')
     if len(rawInfo) == 0:
-        print("Nothing found for this RCSID: " + RCSID)
+        # print("Nothing found for this RCSID: " + RCSID)
         return {}
     rawInfo = rawInfo[0]
     Info = {}
@@ -54,9 +54,20 @@ def getFacultyInfo(RCSID: str, OriginalName: list = [False]) -> dict:
     Info['Phone'] = Phone
     Info['Department'] = Department
     Info['Portfolio'] = Portfolio
-    Info['Profile Page'] = facultyName.replace(' ', '-')
+    Info['Profile Page'] = verifyProfilePageLink(facultyName)
     # Info['Classes'] = []
     return Info
+
+
+# TODO: Verify Profile Page link
+def verifyProfilePageLink(facultyName: str) -> str:
+    link = "https://faculty.rpi.edu/" + \
+        facultyName.replace(' ', '-')
+    pass
+    # if found
+    return link
+    # else
+    return ""
 
 
 def getCourseLink(semester: str, department: str, course: str, crn: str):
@@ -86,7 +97,9 @@ def FacultyToJSON():
                     for RCSID in CourseTree[semester][department][course][crn]:
                         if RCSID not in AllFaculty:
                             AllFaculty[RCSID] = getFacultyInfo(RCSID)
-                            # if AllFaculty[RCSID] == {}:
+                            if AllFaculty[RCSID] == {}:
+                                print("Nothing found for this RCSID: " + RCSID)
+                                AllFaculty.pop(RCSID)
                             #     print(semester, department, course, crn, RCSID)
 
     # # Write to JSON file
@@ -95,25 +108,26 @@ def FacultyToJSON():
 
 
 if __name__ == "__main__":
-    AllFaculty = dict()
+    FacultyToJSON()
+    # AllFaculty = dict()
 
-    # Load course data from JSON file
-    with open("Courses.json", 'r') as infile:
-        # with open("2023 spring\RCOS\YACS_learn\Code\week6\Courses.json", 'r') as infile:
-        CourseTree = json.load(infile)
+    # # Load course data from JSON file
+    # with open("Courses.json", 'r') as infile:
+    #     # with open("2023 spring\RCOS\YACS_learn\Code\week6\Courses.json", 'r') as infile:
+    #     CourseTree = json.load(infile)
 
-    for semester in CourseTree:
-        for department in CourseTree[semester]:
-            for course in CourseTree[semester][department]:
-                for crn in CourseTree[semester][department][course]:
-                    for RCSID in CourseTree[semester][department][course][crn]:
-                        if RCSID not in AllFaculty:
-                            AllFaculty[RCSID] = getFacultyInfo(RCSID)
-                            # if AllFaculty[RCSID] == {}:
-                            #     print(semester, department, course, crn, RCSID)
+    # for semester in CourseTree:
+    #     for department in CourseTree[semester]:
+    #         for course in CourseTree[semester][department]:
+    #             for crn in CourseTree[semester][department][course]:
+    #                 for RCSID in CourseTree[semester][department][course][crn]:
+    #                     if RCSID not in AllFaculty:
+    #                         AllFaculty[RCSID] = getFacultyInfo(RCSID)
+    #                         # if AllFaculty[RCSID] == {}:
+    #                         #     print(semester, department, course, crn, RCSID)
 
-    # # Write to JSON file
-    with open('Prof.json', 'w') as outfile:
-        json.dump(AllFaculty, outfile, indent=4, sort_keys=False)
+    # # # Write to JSON file
+    # with open('Prof.json', 'w') as outfile:
+    #     json.dump(AllFaculty, outfile, indent=4, sort_keys=False)
 
-    # print("Done")
+    # # print("Done")

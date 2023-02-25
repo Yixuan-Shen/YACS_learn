@@ -52,13 +52,14 @@ def CreateCoursesJSON(filename: str = '2023Spring.html'):
 
 
 if __name__ == "__main__":
-    # html = requests(link)
-    # html = open('2023 spring\\RCOS\\YACS_learn\\Code\\week6\\2023Spring.html', 'r')
-    html = open('2023Spring.html', 'r')
-    courseTree = praseSearchResult(html)
+    CreateCoursesJSON()
+    # # html = requests(link)
+    # # html = open('2023 spring\\RCOS\\YACS_learn\\Code\\week6\\2023Spring.html', 'r')
+    # html = open('2023Spring.html', 'r')
+    # courseTree = praseSearchResult(html)
 
-    # Write to JSON file
-    with open('Courses.json', 'w') as outfile:
-        json.dump(courseTree, outfile, indent=4, sort_keys=False)
+    # # Write to JSON file
+    # with open('Courses.json', 'w') as outfile:
+    #     json.dump(courseTree, outfile, indent=4, sort_keys=False)
 
-    # print("Done")
+    # # print("Done")

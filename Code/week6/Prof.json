@@ -167,7 +167,6 @@
         "Department": "Biological Sciences",
         "Portfolio": "School of Science"
     },
-    "linhar": {},
     "ramans": {
         "Name": "Seemanti Ramanath",
         "Title": "Lecturer",
@@ -1048,7 +1047,6 @@
         "Department": "Electrical, Computer, and Systems Engineering",
         "Portfolio": "School of Engineering"
     },
-    "duttap": {},
     "abouza": {
         "Name": "Alhussein Abouzeid",
         "Title": "Professor",
@@ -1121,7 +1119,6 @@
         "Department": "Industrial and Systems Engineering",
         "Portfolio": "School of Engineering"
     },
-    "wallaw": {},
     "mendod": {
         "Name": "David Mendonca",
         "Title": "Research Scientist, Sr.",
@@ -1537,5 +1534,27 @@
         "Phone": "",
         "Department": "Communication and Media",
         "Portfolio": "School of Humanities, Arts and  Social Sciences (HASS)"
+    },
+	"linhar": {
+        "Name": "Robert Linhardt",
+        "Title": "",
+        "Email": "linhar@rpi.edu",
+        "Phone": "518-276-3404",
+        "Department": "Ann and John H. Broadbent, Jr. ’59 Senior Constellation Professor of Biocatalysis and Metabolic Engineering",
+        "Portfolio": ""
+    },"duttap": {
+        "Name": "Partha Dutta",
+        "Title": "Professor Emeritus",
+        "Email": "duttap@rpi.edu",
+        "Phone": "518-491-9364",
+        "Department": "Electrical, Computer, and Systems Engineering",
+        "Portfolio": ""
+    },"wallaw": {
+        "Name": "William Wallace",
+        "Title": "Professor Emeritus",
+        "Email": "wallaw@rpi.edu",
+        "Phone": "",
+        "Department": "Industrial and Systems Engineering",
+        "Portfolio": ""
     }
 }

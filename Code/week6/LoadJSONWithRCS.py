@@ -61,18 +61,19 @@ def FillJSONWithRCSIDs():
 
 
 if __name__ == "__main__":
-    Courses = dict()
+    FillJSONWithRCSIDs()
+    # Courses = dict()
 
-    # Load course data from JSON file
-    with open("Courses.json", 'r') as infile:
-        # with open("2023 spring\RCOS\YACS_learn\Code\week6\Courses.json", 'r') as infile:
-        Courses = json.load(infile)
+    # # Load course data from JSON file
+    # with open("Courses.json", 'r') as infile:
+    #     # with open("2023 spring\RCOS\YACS_learn\Code\week6\Courses.json", 'r') as infile:
+    #     Courses = json.load(infile)
 
-    loadCourseTreeWithRCSID(Courses)
+    # loadCourseTreeWithRCSID(Courses)
 
-    # Write to JSON file
-    with open("Courses.json", 'w') as outfile:
-        # with open("2023 spring\RCOS\YACS_learn\Code\week6\Courses.json", 'w') as outfile:
-        json.dump(Courses, outfile, indent=4, sort_keys=False)
+    # # Write to JSON file
+    # with open("Courses.json", 'w') as outfile:
+    #     # with open("2023 spring\RCOS\YACS_learn\Code\week6\Courses.json", 'w') as outfile:
+    #     json.dump(Courses, outfile, indent=4, sort_keys=False)
 
     # print("Done")
