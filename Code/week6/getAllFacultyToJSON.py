@@ -11,8 +11,8 @@ def parseRCSID(Faculty: dict) -> list:
     return RCSIDs
 
 
-def getFacultyInfo(RCSID: str, OriginalName: list = [False]) -> dict:
-    html = requests.get('https://directory.rpi.edu/pplsearch/NULL/NULL/{}/NULL'
+def getFacultyInfo(RCSID: str, session: requests.Session, OriginalName: list = [False]) -> dict:
+    html = session.get('https://directory.rpi.edu/pplsearch/NULL/NULL/{}/NULL'
                         .format(RCSID))
     soup = BeautifulSoup(html.text, 'html.parser')
     rawInfo = soup.find_all('div', class_='row p-3 odd')
@@ -66,12 +66,12 @@ def verifyProfilePageLink(facultyName: str) -> str:
     html = requests.get(link)
     if html.status_code == 200:
         return link
-    elif html.status_code == 404:
-        return ""
+    # elif html.status_code == 404:
+    return ""
 
 
 def getCourseLink(semester: str, department: str, course: str, crn: str):
-    link = '''https://sis.rpi.edu/rss/bwckschd.p_disp_listcrse?term_in={}&subj_in={}&crse_in={}&crn_in={}'''.format(
+    link = "https://sis.rpi.edu/rss/bwckschd.p_disp_listcrse?term_in={}&subj_in={}&crse_in={}&crn_in={}".format(
         semester, department, course, crn)
     return link
 
@@ -83,8 +83,9 @@ def getFacultyName(link: str) -> str:
     return facultyName
 
 
-def FacultyToJSON():
+def FacultyToJSON(session: requests.Session):
     AllFaculty = dict()
+    # PopQueue = dict()
 
     # Load course data from JSON file
     with open("Courses.json", 'r') as infile:
@@ -96,11 +97,12 @@ def FacultyToJSON():
                 for crn in CourseTree[semester][department][course]:
                     for RCSID in CourseTree[semester][department][course][crn]:
                         if RCSID not in AllFaculty:
-                            AllFaculty[RCSID] = getFacultyInfo(RCSID)
+                            AllFaculty[RCSID] = getFacultyInfo(RCSID, session)
                             if AllFaculty[RCSID] == {}:
                                 print("Nothing found for this RCSID: " + RCSID)
-                                AllFaculty.pop(RCSID)
-                            #     print(semester, department, course, crn, RCSID)
+                                # PopQueue[RCSID] = [semester, department, course, crn]
+                                # AllFaculty.pop(RCSID)
+                                # print(semester, department, course, crn, RCSID)
 
     # # Write to JSON file
     with open('Prof.json', 'w') as outfile:
@@ -108,7 +110,8 @@ def FacultyToJSON():
 
 
 if __name__ == "__main__":
-    FacultyToJSON()
+    session = requests.Session()
+    FacultyToJSON(session)
     # AllFaculty = dict()
 
     # # Load course data from JSON file

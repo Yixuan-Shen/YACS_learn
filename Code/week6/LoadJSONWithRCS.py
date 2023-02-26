@@ -22,13 +22,13 @@ def parseRCSID(Faculty: dict) -> list:
     return RCSIDs
 
 
-def loadCourseTreeWithRCSID(CourseTree: dict):
+def loadCourseTreeWithRCSID(CourseTree: dict, session: requests.Session):
     for semester in CourseTree:
         for department in CourseTree[semester]:
             for course in CourseTree[semester][department]:
                 for crn in CourseTree[semester][department][course]:
                     link = getCourseLink(semester, department, course, crn)
-                    html = requests.get(link)
+                    html = session.get(link)
                     soup = BeautifulSoup(html.text, 'html.parser')
                     facultys = parseHtmlToGetFacultyEmail(soup)
                     rcsID = parseRCSID(facultys)
@@ -46,14 +46,14 @@ def getCourseLink(semester: str, department: str, course: str, crn: str):
     return link
 
 
-def FillJSONWithRCSIDs():
+def FillJSONWithRCSIDs(session):
     Courses = dict()
 
     # Load course data from JSON file
     with open("Courses.json", 'r') as infile:
         Courses = json.load(infile)
 
-    loadCourseTreeWithRCSID(Courses)
+    loadCourseTreeWithRCSID(Courses, session)
 
     # Write to JSON file
     with open("Courses.json", 'w') as outfile:
@@ -61,7 +61,8 @@ def FillJSONWithRCSIDs():
 
 
 if __name__ == "__main__":
-    FillJSONWithRCSIDs()
+    session = requests.Session()
+    FillJSONWithRCSIDs(session)
     # Courses = dict()
 
     # # Load course data from JSON file

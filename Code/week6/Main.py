@@ -1,6 +1,7 @@
 import getAllCourseToJSON
 import LoadJSONWithRCS
 import getAllFacultyToJSON
+import requests
 
 # link = https://sis.rpi.edu/rss/bwckschd.p_disp_listcrse?term_in=
 # 202301&subj_in=CSCI&crse_in=2961&crn_in=80260
@@ -22,9 +23,13 @@ import getAllFacultyToJSON
 
 
 def main():
+    session = requests.Session()
     getAllCourseToJSON.CreateCoursesJSON()
-    LoadJSONWithRCS.FillJSONWithRCSIDs()
-    getAllFacultyToJSON.FacultyToJSON()
+    print("Courses.json created")
+    LoadJSONWithRCS.FillJSONWithRCSIDs(session)
+    print("Courses.json filled with RCSIDs")
+    getAllFacultyToJSON.FacultyToJSON(session)
+    print("Faculty.json created")
 
 
 if __name__ == "__main__":
