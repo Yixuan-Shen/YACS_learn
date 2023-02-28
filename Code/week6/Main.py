@@ -26,9 +26,9 @@ def main():
     session = requests.Session()
     getAllCourseToJSON.CreateCoursesJSON()
     print("Courses.json created")
-    LoadJSONWithRCS.FillJSONWithRCSIDs(session)
+    AllFaculty = LoadJSONWithRCS.FillJSONWithRCSIDs(session)
     print("Courses.json filled with RCSIDs")
-    getAllFacultyToJSON.FacultyToJSON(session)
+    getAllFacultyToJSON.FacultyToJSON(AllFaculty, session)
     print("Faculty.json created")
 
 

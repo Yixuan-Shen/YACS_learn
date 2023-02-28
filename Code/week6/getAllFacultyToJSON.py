@@ -13,7 +13,7 @@ def parseRCSID(Faculty: dict) -> list:
 
 def getFacultyInfo(RCSID: str, session: requests.Session, OriginalName: list = [False]) -> dict:
     html = session.get('https://directory.rpi.edu/pplsearch/NULL/NULL/{}/NULL'
-                        .format(RCSID))
+                       .format(RCSID))
     soup = BeautifulSoup(html.text, 'html.parser')
     rawInfo = soup.find_all('div', class_='row p-3 odd')
     if len(rawInfo) == 0:
@@ -83,40 +83,11 @@ def getFacultyName(link: str) -> str:
     return facultyName
 
 
-def FacultyToJSON(session: requests.Session):
-    AllFaculty = dict()
-    # PopQueue = dict()
-
-    # Load course data from JSON file
-    with open("Courses.json", 'r') as infile:
-        CourseTree = json.load(infile)
-
-    for semester in CourseTree:
-        for department in CourseTree[semester]:
-            for course in CourseTree[semester][department]:
-                for crn in CourseTree[semester][department][course]:
-                    for RCSID in CourseTree[semester][department][course][crn]:
-                        if RCSID not in AllFaculty:
-                            AllFaculty[RCSID] = getFacultyInfo(RCSID, session)
-                            if AllFaculty[RCSID] == {}:
-                                print("Nothing found for this RCSID: " + RCSID)
-                                # PopQueue[RCSID] = [semester, department, course, crn]
-                                # AllFaculty.pop(RCSID)
-                                # print(semester, department, course, crn, RCSID)
-
-    # # Write to JSON file
-    with open('Prof.json', 'w') as outfile:
-        json.dump(AllFaculty, outfile, indent=4, sort_keys=False)
-
-
-if __name__ == "__main__":
-    session = requests.Session()
-    FacultyToJSON(session)
-    # AllFaculty = dict()
+def FacultyToJSON(AllFaculty: dict, session: requests.Session):
+    PopQueue = set()
 
     # # Load course data from JSON file
     # with open("Courses.json", 'r') as infile:
-    #     # with open("2023 spring\RCOS\YACS_learn\Code\week6\Courses.json", 'r') as infile:
     #     CourseTree = json.load(infile)
 
     # for semester in CourseTree:
@@ -125,12 +96,31 @@ if __name__ == "__main__":
     #             for crn in CourseTree[semester][department][course]:
     #                 for RCSID in CourseTree[semester][department][course][crn]:
     #                     if RCSID not in AllFaculty:
-    #                         AllFaculty[RCSID] = getFacultyInfo(RCSID)
-    #                         # if AllFaculty[RCSID] == {}:
-    #                         #     print(semester, department, course, crn, RCSID)
+    #                         AllFaculty[RCSID] = getFacultyInfo(RCSID, session)
+    #                         if AllFaculty[RCSID] == {}:
+    #                             print("Nothing found for this RCSID: " + RCSID)
+    #                             # PopQueue[RCSID] = [semester, department, course, crn]
+    #                             # AllFaculty.pop(RCSID)
+    #                             # print(semester, department, course, crn, RCSID)
 
-    # # # Write to JSON file
-    # with open('Prof.json', 'w') as outfile:
-    #     json.dump(AllFaculty, outfile, indent=4, sort_keys=False)
+    # # Load Faculty data from JSON file
+    # with open("Prof.json", 'r') as infile:
+    #     AllFaculty = json.load(infile)
 
-    # # print("Done")
+    for RCSID in AllFaculty:
+        AllFaculty[RCSID] = getFacultyInfo(RCSID, session)
+        if AllFaculty[RCSID] == {}:
+            print("Nothing found for this RCSID: " + RCSID)
+            PopQueue.add(RCSID)
+
+    for RCSID in PopQueue:
+        AllFaculty.pop(RCSID)
+        print("Removed: " + RCSID)
+
+    # # Write to JSON file
+    with open('Prof.json', 'w') as outfile:
+        json.dump(AllFaculty, outfile, indent=4, sort_keys=False)
+
+
+if __name__ == "__main__":
+    pass

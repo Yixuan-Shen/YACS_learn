@@ -4,15 +4,11 @@ from bs4 import BeautifulSoup
 
 
 def parseHtmlToGetFacultyEmail(soup: BeautifulSoup) -> dict:
-    # html = open(filename, 'r')
-    # soup = BeautifulSoup(html, 'html.parser')
-
     # Get all emails
     Faculty = {}
     links = soup.find_all('a', href=True)
     for link in links:
         if link['href'].startswith('mailto:'):
-            # print(link['href'][7:], link['target'])
             Faculty[link['href'][7:]] = link['target']
     return Faculty
 
@@ -22,7 +18,7 @@ def parseRCSID(Faculty: dict) -> list:
     return RCSIDs
 
 
-def loadCourseTreeWithRCSID(CourseTree: dict, session: requests.Session):
+def loadCourseTreeWithRCSID(CourseTree: dict, AllFaculty: dict, session: requests.Session):
     for semester in CourseTree:
         for department in CourseTree[semester]:
             for course in CourseTree[semester][department]:
@@ -31,13 +27,10 @@ def loadCourseTreeWithRCSID(CourseTree: dict, session: requests.Session):
                     html = session.get(link)
                     soup = BeautifulSoup(html.text, 'html.parser')
                     facultys = parseHtmlToGetFacultyEmail(soup)
-                    rcsID = parseRCSID(facultys)
-                    CourseTree[semester][department][course][crn] = rcsID
-        #             print(semester, department, course, crn, rcsID)
-        #             break
-        #         break
-        #     break
-        # break
+                    rcsIDs = parseRCSID(facultys)
+                    CourseTree[semester][department][course][crn] = rcsIDs
+                    for RCSID in rcsIDs:
+                        AllFaculty[RCSID] = {}
 
 
 def getCourseLink(semester: str, department: str, course: str, crn: str):
@@ -46,35 +39,26 @@ def getCourseLink(semester: str, department: str, course: str, crn: str):
     return link
 
 
-def FillJSONWithRCSIDs(session):
+def FillJSONWithRCSIDs(session) -> dict:
     Courses = dict()
+    AllFaculty = dict()
 
     # Load course data from JSON file
     with open("Courses.json", 'r') as infile:
         Courses = json.load(infile)
 
-    loadCourseTreeWithRCSID(Courses, session)
+    loadCourseTreeWithRCSID(Courses, AllFaculty, session)
 
     # Write to JSON file
     with open("Courses.json", 'w') as outfile:
         json.dump(Courses, outfile, indent=4, sort_keys=False)
 
+    # with open("Prof.json", 'w') as outfile:
+    #     json.dump(AllFaculty, outfile, indent=4, sort_keys=True)
+
+    return AllFaculty
+
 
 if __name__ == "__main__":
     session = requests.Session()
     FillJSONWithRCSIDs(session)
-    # Courses = dict()
-
-    # # Load course data from JSON file
-    # with open("Courses.json", 'r') as infile:
-    #     # with open("2023 spring\RCOS\YACS_learn\Code\week6\Courses.json", 'r') as infile:
-    #     Courses = json.load(infile)
-
-    # loadCourseTreeWithRCSID(Courses)
-
-    # # Write to JSON file
-    # with open("Courses.json", 'w') as outfile:
-    #     # with open("2023 spring\RCOS\YACS_learn\Code\week6\Courses.json", 'w') as outfile:
-    #     json.dump(Courses, outfile, indent=4, sort_keys=False)
-
-    # print("Done")
