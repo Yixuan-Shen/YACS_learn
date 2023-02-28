@@ -1,26 +1,23 @@
+# -*- coding: utf-8 -*-
 import requests
 import json
 from bs4 import BeautifulSoup
 
-# link = https://sis.rpi.edu/rss/bwckschd.p_disp_listcrse?term_in=
-# 202301&subj_in=CSCI&crse_in=2961&crn_in=80260
-
-
-def parseRCSID(Faculty: dict) -> list:
-    RCSIDs = [email.split('@')[0] for email in Faculty]
-    return RCSIDs
-
 
 def getFacultyInfo(RCSID: str, session: requests.Session, OriginalName: list = [False]) -> dict:
+    '''Parse a single faculty's info and return as a dictionary'''
     html = session.get('https://directory.rpi.edu/pplsearch/NULL/NULL/{}/NULL'
                        .format(RCSID))
     soup = BeautifulSoup(html.text, 'html.parser')
     rawInfo = soup.find_all('div', class_='row p-3 odd')
+    # If the faculty is not found, return an empty dict
+    # This will deal later in FacultyToJSON
     if len(rawInfo) == 0:
-        # print("Nothing found for this RCSID: " + RCSID)
         return {}
+
+    # If the faculty is found, parse the info
     rawInfo = rawInfo[0]
-    Info = {}
+    onePerson = {}
 
     rawInfo = rawInfo.text
     rawInfo = rawInfo.split('\n')
@@ -48,64 +45,39 @@ def getFacultyInfo(RCSID: str, session: requests.Session, OriginalName: list = [
             Department = rawInfo[i+1]
         elif rawInfo[i].startswith('Portfolio'):
             Portfolio = rawInfo[i+1]
-    Info['Name'] = facultyName
-    Info['Title'] = Title
-    Info['Email'] = Email
-    Info['Phone'] = Phone
-    Info['Department'] = Department
-    Info['Portfolio'] = Portfolio
-    Info['Profile Page'] = verifyProfilePageLink(facultyName)
-    # Info['Classes'] = []
-    return Info
+    onePerson['Name'] = facultyName
+    onePerson['Title'] = Title
+    onePerson['Email'] = Email
+    onePerson['Phone'] = Phone
+    onePerson['Department'] = Department
+    onePerson['Portfolio'] = Portfolio
+    onePerson['Profile Page'] = verifyProfilePageLink(facultyName)
+    return onePerson
 
 
-# TODO: Verify Profile Page link
 def verifyProfilePageLink(facultyName: str) -> str:
+    '''Helper function to verify the profile page link is valid or not'''
     link = "https://faculty.rpi.edu/" + \
         facultyName.replace(' ', '-')
     html = requests.get(link)
     if html.status_code == 200:
         return link
-    # elif html.status_code == 404:
     return ""
 
 
-def getCourseLink(semester: str, department: str, course: str, crn: str):
-    link = "https://sis.rpi.edu/rss/bwckschd.p_disp_listcrse?term_in={}&subj_in={}&crse_in={}&crn_in={}".format(
-        semester, department, course, crn)
-    return link
-
-
-def getFacultyName(link: str) -> str:
-    html = requests.get(link)
-    soup = BeautifulSoup(html.text, 'html.parser')
-    facultyName = 'a'
-    return facultyName
-
-
 def FacultyToJSON(AllFaculty: dict, session: requests.Session):
+    '''Main function to get all faculty info and write to JSON file'''
+    # This is a set to store the RCSID of faculty that is not found
+    # So they can be removed from AllFaculty at the end
     PopQueue = set()
 
-    # # Load course data from JSON file
-    # with open("Courses.json", 'r') as infile:
-    #     CourseTree = json.load(infile)
+    # This is a another way to load data from exsiting JSON file
+    # So it might be able to run independently
 
-    # for semester in CourseTree:
-    #     for department in CourseTree[semester]:
-    #         for course in CourseTree[semester][department]:
-    #             for crn in CourseTree[semester][department][course]:
-    #                 for RCSID in CourseTree[semester][department][course][crn]:
-    #                     if RCSID not in AllFaculty:
-    #                         AllFaculty[RCSID] = getFacultyInfo(RCSID, session)
-    #                         if AllFaculty[RCSID] == {}:
-    #                             print("Nothing found for this RCSID: " + RCSID)
-    #                             # PopQueue[RCSID] = [semester, department, course, crn]
-    #                             # AllFaculty.pop(RCSID)
-    #                             # print(semester, department, course, crn, RCSID)
-
-    # # Load Faculty data from JSON file
+    # Load Faculty data from JSON file
     # with open("Prof.json", 'r') as infile:
     #     AllFaculty = json.load(infile)
+    #     infile.close()
 
     for RCSID in AllFaculty:
         AllFaculty[RCSID] = getFacultyInfo(RCSID, session)
@@ -120,7 +92,9 @@ def FacultyToJSON(AllFaculty: dict, session: requests.Session):
     # # Write to JSON file
     with open('Prof.json', 'w') as outfile:
         json.dump(AllFaculty, outfile, indent=4, sort_keys=False)
+        outfile.close()
 
 
 if __name__ == "__main__":
+    # For now, I am not planning to run this file independently
     pass

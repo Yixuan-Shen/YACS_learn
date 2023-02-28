@@ -1,16 +1,20 @@
+# -*- coding: utf-8 -*-
 import requests
 import json
 from bs4 import BeautifulSoup
 
-# example link:
-# https://sis.rpi.edu/rss/bwckschd.p_disp_listcrse?
-# term_in=202301&amp;subj_in=CSCI&amp;crse_in=1100&amp;crn_in=76156
 
-
-def praseSearchResult(file) -> dict:
+def praseSearchResult(filename: str) -> dict:
+    '''
+    from the search result, save all the courses to dict tree
+    with the structure of 
+    dict[semester][department][course][crn] = [facultyRCSIDs]
+    '''
     courseTree = dict()
-    soup = BeautifulSoup(file, 'html.parser')
+    html = open(filename, 'r')
+    soup = BeautifulSoup(html, 'html.parser')
     links = getAllLink(soup)
+    html.close()
 
     for link in links:
         course = link.split('?')[1]
@@ -30,7 +34,8 @@ def praseSearchResult(file) -> dict:
     return courseTree
 
 
-def getAllLink(soup) -> list:
+def getAllLink(soup: BeautifulSoup) -> list:
+    '''Helper function to get all the links from the soup'''
     rawLinks = soup.find_all('a', href=True)
     returnLinks = []
     for link in rawLinks:
@@ -44,13 +49,16 @@ def getAllLink(soup) -> list:
 
 
 def CreateCoursesJSON(filename: str = '2023Spring.html'):
-    html = open(filename, 'r')
-    courseTree = praseSearchResult(html)
+    '''Main function to parse data and create the JSON file'''
+    # This prosess is totally offline for now
+    # TODO: find the online link which can get same result
+    # In that way, we can automate the process at a scheduled time
+    courseTree = praseSearchResult(filename)
 
     with open('Courses.json', 'w') as outfile:
         json.dump(courseTree, outfile, indent=4, sort_keys=False)
 
 
 if __name__ == "__main__":
+    # This code can always run independently
     CreateCoursesJSON()
-    

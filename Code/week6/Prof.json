@@ -352,7 +352,7 @@
     },
     "mohamh2": {
         "Name": "Hisham Mohamed",
-        "Title": "Lecturer",
+        "Title": "Lecturer, Sr.",
         "Email": "mohamh2@rpi.edu",
         "Phone": "518-276-6323",
         "Department": "Biomedical Engineering",
@@ -1637,15 +1637,6 @@
         "Portfolio": "School of Science",
         "Profile Page": "https://faculty.rpi.edu/Yong-Sung-Kim"
     },
-    "persap": {
-        "Name": "Peter Persans",
-        "Title": "Professor",
-        "Email": "persap@rpi.edu",
-        "Phone": "518-276-2934",
-        "Department": "Physics, Applied Physics & Astronomy",
-        "Portfolio": "School of Science",
-        "Profile Page": "https://faculty.rpi.edu/Peter-Persans"
-    },
     "michaj2": {
         "Name": "Joseph Michael",
         "Title": "Lecturer",
@@ -1654,6 +1645,15 @@
         "Department": "Physics, Applied Physics & Astronomy",
         "Portfolio": "School of Science",
         "Profile Page": "https://faculty.rpi.edu/Joseph-Michael"
+    },
+    "persap": {
+        "Name": "Peter Persans",
+        "Title": "Professor",
+        "Email": "persap@rpi.edu",
+        "Phone": "518-276-2934",
+        "Department": "Physics, Applied Physics & Astronomy",
+        "Portfolio": "School of Science",
+        "Profile Page": "https://faculty.rpi.edu/Peter-Persans"
     },
     "westd2": {
         "Name": "Damien West",

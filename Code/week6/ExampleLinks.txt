@@ -1,0 +1,7 @@
+Example course link: https://sis.rpi.edu/rss/bwckschd.p_disp_listcrse?term_in=202301&subj_in=CSCI&crse_in=2961&crn_in=80260
+
+For each term in year Y:
+Spring: Y01
+Summer(Arch): Y05
+Fall: Y09
+Winter: Y12
