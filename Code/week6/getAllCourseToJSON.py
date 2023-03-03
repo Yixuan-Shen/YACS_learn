@@ -4,61 +4,77 @@ import json
 from bs4 import BeautifulSoup
 
 
-def praseSearchResult(filename: str) -> dict:
-    '''
-    from the search result, save all the courses to dict tree
-    with the structure of 
-    dict[semester][department][course][crn] = [facultyRCSIDs]
-    '''
-    courseTree = dict()
-    html = open(filename, 'r')
-    soup = BeautifulSoup(html, 'html.parser')
-    links = getAllLink(soup)
-    html.close()
-
-    for link in links:
-        course = link.split('?')[1]
-        parts = course.split('&')
-        parts[0] = parts[0].split('=')[1]
-        parts[1] = parts[1].split('=')[1]
-        parts[2] = parts[2].split('=')[1]
-        parts[3] = parts[3].split('=')[1]
-        if parts[0] not in courseTree:
-            courseTree[parts[0]] = dict()
-        if parts[1] not in courseTree[parts[0]]:
-            courseTree[parts[0]][parts[1]] = dict()
-        if parts[2] not in courseTree[parts[0]][parts[1]]:
-            courseTree[parts[0]][parts[1]][parts[2]] = dict()
-        if parts[3] not in courseTree[parts[0]][parts[1]][parts[2]]:
-            courseTree[parts[0]][parts[1]][parts[2]][parts[3]] = []
-    return courseTree
-
-
 def getAllLink(soup: BeautifulSoup) -> list:
     '''Helper function to get all the links from the soup'''
     rawLinks = soup.find_all('a', href=True)
     returnLinks = []
     for link in rawLinks:
-        # If HTML was saved on Windows Firefox, the link will be shortened as
-        # /rss/bwckschd.p_disp_listcrse?term_in=
-        # Therefore I use a plugin to save the HTML as a single file
-        # called "SingleFile"
-        if link['href'].startswith('https://sis.rpi.edu/rss/bwckschd.p_disp_listcrse?term_in='):
-            returnLinks.append(link['href'])
+        if link['href'].startswith("/rss/bwckctlg.p_disp_listcrse"):
+            returnLinks.append("https://sis.rpi.edu" + link['href'])
     return returnLinks
 
 
-def CreateCoursesJSON(filename: str = '2023Spring.html'):
-    '''Main function to parse data and create the JSON file'''
-    # This prosess is totally offline for now
-    # TODO: find the online link which can get same result
-    # In that way, we can automate the process at a scheduled time
-    courseTree = praseSearchResult(filename)
+def parseCRNs(link: str, session) -> list:
+    '''Helper function get CRNs from the link page'''
+    html = session.get(link)
+    soup = BeautifulSoup(html.text, 'html.parser')
+    rawCRNs = soup.find_all('a', href=True)
+    CRNs = []
+    for CRN in rawCRNs:
+        if CRN['href'].startswith("/rss/bwckschd.p_disp_detail_sched"):
+            CRNs.append(CRN['href'].split('crn_in=')[1])
+    return CRNs
 
-    with open('Courses.json', 'w') as outfile:
+
+def CreateCoursesTree(Tree: dict, semester: str, department: str, course: str, CRNs: list) -> None:
+    '''Helper function to construct the tree'''
+    if semester not in Tree:
+        Tree[semester] = dict()
+    if department not in Tree[semester]:
+        Tree[semester][department] = dict()
+    if course not in Tree[semester][department]:
+        Tree[semester][department][course] = dict()
+    for crn in CRNs:
+        Tree[semester][department][course][crn] = []
+    return None
+
+
+def getAllCourses(departments: list, session, YearAndSemester: str):
+    '''Main function to get all the courses'''
+    courseTree = dict()
+    for department in departments:
+        link = "https://sis.rpi.edu/rss/bwckctlg.p_display_courses?term_in={}&call_proc_in\
+=&sel_subj=&sel_levl=&sel_schd=&sel_coll\
+=&sel_divs=&sel_dept=&sel_attr=&sel_subj={}".format(YearAndSemester, department)
+        html = session.get(link)
+        soup = BeautifulSoup(html.text, 'html.parser')
+        linksInDepartment = getAllLink(soup)
+        for link in linksInDepartment:
+            CRNs = parseCRNs(link, session)
+            CreateCoursesTree(courseTree, YearAndSemester, 
+                department, link.split('?')[1].split('&')[2].split('=')[1], CRNs)
+    return courseTree
+
+
+def CreateCoursesJSON(session=None, YearAndSemester: str = "202305"):
+    '''Main function to parse data and create the JSON file'''
+    with open('Departments.json', 'r') as infile:
+        departments = json.load(infile)
+        infile.close()
+
+    if session == None:
+        session = requests.Session()
+    courseTree = getAllCourses(departments, session, YearAndSemester)
+
+    with open('Course.json', 'w') as outfile:
         json.dump(courseTree, outfile, indent=4, sort_keys=False)
+        outfile.close()
+
+    return courseTree
 
 
 if __name__ == "__main__":
     # This code can always run independently
+    # TODO: add option to set semester, and find a way to get all the departments
+    # Also need error handling
     CreateCoursesJSON()

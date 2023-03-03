@@ -7,7 +7,7 @@ import requests
 
 def main():
     session = requests.Session()
-    getAllCourseToJSON.CreateCoursesJSON()
+    getAllCourseToJSON.CreateCoursesJSON(session)
     print("Courses.json created")
     AllFaculty = LoadJSONWithRCS.FillJSONWithRCSIDs(session)
     print("Courses.json filled with RCSIDs")

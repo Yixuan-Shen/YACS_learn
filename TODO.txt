@@ -1,0 +1,1 @@
+Reconstruct the structure of the courseTree, get rid of semester key, since each file represents a semester.

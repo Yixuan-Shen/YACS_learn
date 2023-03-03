@@ -38,7 +38,8 @@ def loadCourseTreeWithRCSID(CourseTree: dict, AllFaculty: dict, session: request
 
 def getCourseLink(semester: str, department: str, course: str, crn: str) -> str:
     '''Helper function to get the link of the course'''
-    link = 'https://sis.rpi.edu/rss/bwckschd.p_disp_listcrse?term_in={}&subj_in={}&crse_in={}&crn_in={}'.format(
+    link = 'https://sis.rpi.edu/rss/bwckschd.p_disp_listcrse\
+?term_in={}&subj_in={}&crse_in={}&crn_in={}'.format(
         semester, department, course, crn)
     return link
 
