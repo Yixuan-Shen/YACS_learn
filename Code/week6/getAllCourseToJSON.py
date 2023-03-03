@@ -3,6 +3,13 @@ import requests
 import json
 from bs4 import BeautifulSoup
 
+departments = ["ARTS", "COGS", "STSH", "STSS", "COMM", "ECON", "GSAS", "IHSS",
+               "LANG", "LITR", "PHIL", "PSYC", "WRIT", "BMED", "CHME", "ECSE",
+               "ENVE", "MANE", "MTLE", "CIVL", "ENGR", "ESCI", "ISYE", "EPOW",
+               "BCBP", "CSCI", "ERTH", "IENV", "ISCI", "MATP", "PHYS", "ASTR",
+               "BIOL", "CHEM", "MATH", "ITWS", "ARCH", "LGHT", "MGMT", "ADMN",
+               "USAF", "USNA", "USAR"]
+
 
 def getAllLink(soup: BeautifulSoup) -> list:
     '''Helper function to get all the links from the soup'''
@@ -47,21 +54,20 @@ def getAllCourses(departments: list, session, YearAndSemester: str):
 =&sel_subj=&sel_levl=&sel_schd=&sel_coll\
 =&sel_divs=&sel_dept=&sel_attr=&sel_subj={}".format(YearAndSemester, department)
         html = session.get(link)
-        soup = BeautifulSoup(html.text, 'html.parser')
-        linksInDepartment = getAllLink(soup)
-        for link in linksInDepartment:
-            CRNs = parseCRNs(link, session)
-            CreateCoursesTree(courseTree, YearAndSemester, 
-                department, link.split('?')[1].split('&')[2].split('=')[1], CRNs)
+        if html.status_code == 200:
+            soup = BeautifulSoup(html.text, 'html.parser')
+            linksInDepartment = getAllLink(soup)
+            for link in linksInDepartment:
+                CRNs = parseCRNs(link, session)
+                CreateCoursesTree(courseTree, YearAndSemester,
+                                  department, link.split('?')[1].split('&')[2].split('=')[1], CRNs)
+        else:
+            print("department: {} not found".format(department))
     return courseTree
 
 
 def CreateCoursesJSON(session=None, YearAndSemester: str = "202305"):
     '''Main function to parse data and create the JSON file'''
-    with open('Departments.json', 'r') as infile:
-        departments = json.load(infile)
-        infile.close()
-
     if session == None:
         session = requests.Session()
     courseTree = getAllCourses(departments, session, YearAndSemester)
